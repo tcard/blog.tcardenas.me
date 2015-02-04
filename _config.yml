@@ -1,0 +1,70 @@
+# Site settings
+title: El blog de Toni Cárdenas
+email: toni@tcardenas.me
+description: > # this means to ignore newlines until "baseurl:"
+  El blog de Toni Cárdenas.
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: "http://blog.tcardenas.me" # the base hostname & protocol for your site
+twitter_username: tcardv
+github_username:  tcard
+
+# THEME-SPECIFIC CONFIGURATION
+theme:
+  # Meta
+  title: El blog de Toni Cárdenas
+  avatar: avatar.png
+  gravatar: # email md5 hash
+  description: "El blog de Toni Cárdenas." # used by search engines
+  
+  # Header and footer text
+  footer_text: >
+   Powered by <a href="http://jekyllrb.com">Jekyll</a> with <a href="https://rohanchandra.github.io/project/type/">Type Theme</a>
+  
+  # Icons
+  rss: false
+  email_address: # full email address, e.g. "sam@example.com"
+  behance:
+  bitbucket: 
+  dribbble: 
+  facebook: 
+  flickr: 
+  github: "tcard"
+  google_plus: 
+  instagram: 
+  linkedin:  # full URL
+  pinterest: 
+  reddit: 
+  soundcloud: 
+  stack_exchange:  # full URL
+  steam: 
+  tumblr: 
+  twitter: "tcardv"
+  wordpress: 
+  youtube: 
+  
+  # Scripts
+  google_analytics: "UA-59326624-1"
+  disqus_shortname: "blogtcardenasme"
+  
+  # Localization strings
+  str_follow_on: "Follow on"
+  str_rss_follow: "Follow RSS feed"
+  str_email: "Email"
+  str_next: "Next"
+  str_prev: "Prev"
+  str_continue_reading: "Continue reading"
+  
+  # Colors, typography and padding
+  # Open the "_sass > base" folder, and open "_variables.scss"
+
+# PAGINATION
+paginate: 5
+paginate_path: "blog/page:num"
+
+# BUILD SETTINGS
+markdown: kramdown
+highlighter: pygments
+sass:
+  sass_dir: _sass
+  style: :compressed
+permalink: "/:title"
