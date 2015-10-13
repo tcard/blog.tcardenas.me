@@ -36,7 +36,7 @@ Y estos son los medios que propongo:
 
 * Las actividades **no se limitarán a charlas**. El modelo de charla-presencial-de-uno-a-muchos-sobre-un-tema-arbitrario, el típico en meetups tecnológicos, tiene _muchos_ inconvenientes. No quiero extenderme en el porqué ahora, pero creo que sería muy efectivo hacer cosas más diversas, con propósitos distintos. Tutoriales introductorios, tutoriales sobre temas concretos, hackatons, pequeños proyectos, programación en vivo, blogs, screencasts, o sencillamente comentar las experiencias de cada uno sin más pretensiones, pueden ser más adecuados para en el que la gran mayoría somos tirando a principiantes y no tenemos demasiada «pericia» que aportar, o para difundir el lenguaje entre completos principiantes.
 
-* Para todo ello **se buscará una aplicación web** que nos permita gestionar toda esta actividad. (He pensado que un buen ejercicio sería hacer una en Rust.)
+* Para todo ello **se buscará una aplicación web** que nos permita gestionar toda esta actividad. Quizá Meetup.com pueda valer, pero creo que se queda corto. (He pensado que un buen ejercicio sería hacer una en Rust.)
 
 ### Lo que ya hay
 
@@ -61,3 +61,9 @@ Aunque, por supuesto, estoy más que dispuesto a ayudar a organizar todo esto, n
 Quiero antes **encontrar gente interesada en organizar** el proyecto, planearlo, discutirlo, definir responsabilidades y ponerlo en marcha.
 
 Cualquier interesado, opinión o idea es muy bienvenido.
+
+### PD. El nombre
+
+Sí, bueno, «Rust Castellano» creo que deja más claro que se refiere al idioma que «Rust Español», dejando además menos ambigüedad para un posible «Rust España».
+
+«Rust Hispano» tampoco estaría mal, pero a mí me da la impresión de que es un término más cargado con connotaciones culturales.
