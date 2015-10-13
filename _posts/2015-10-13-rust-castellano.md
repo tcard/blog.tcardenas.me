@@ -3,7 +3,7 @@ title: Rust Castellano
 layout: post
 ---
 
-Me gusta [Rust](https://www.rust-lang.org/). Quiero que la gente lo conozca y lo use. Quiero contribuir construyendo **Rust Castellano**, una plataforma en español para para programadores no tan experimentados, de menor edad, que no saben tanto inglés, que no viven en _hubs_ tecnológicos o que no se han visto rodeados del entorno adecuado. 
+Me gusta [Rust](https://www.rust-lang.org/). Quiero que la gente lo conozca y lo use. Quiero contribuir construyendo **Rust Castellano**, una plataforma en español para programadores no tan experimentados, de menor edad, que no saben tanto inglés, que no viven en _hubs_ tecnológicos o que no se han visto rodeados del entorno adecuado. 
 
 ### Los inicios: Rust 1.0 en Madrid
 
@@ -50,7 +50,7 @@ Este es el tipo de cosas que me gustaría integrar en Rust Castellano.
 
 ### Rust Madrid necesita organizador/es
 
-Yo ya no vivo en Madrid. Rust Madrid, en caso de continuar, tendrá que ser bajo otra organización. Si hay voluntarios, estaré encantado de pasar.
+Yo ya no vivo en Madrid. Rust Madrid, en caso de continuar, tendrá que ser bajo otra organización. Si hay voluntarios, estaré encantado de pasar el relevo.
 
 Me encantaría, eso sí, que Rust Madrid se integre en este supuesto Rust Castellano, se coordine con otros grupos, locales o por Internet, y ayude a que funcione.
 
