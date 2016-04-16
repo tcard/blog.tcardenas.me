@@ -68,3 +68,5 @@ sass:
   sass_dir: _sass
   style: :compressed
 permalink: "/:title"
+
+gems: [jekyll-paginate, pygments.rb]
