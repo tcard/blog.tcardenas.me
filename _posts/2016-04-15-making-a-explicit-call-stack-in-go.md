@@ -3,9 +3,9 @@ title: Making a explicit call stack in Go
 layout: post
 ---
 
-_You may want to [jump directly to the core thing](#reifying-the-call-stack), if you know how stacks work._
+_You may want to [jump directly to the core thing](#reifying-the-call-stack), if you already know how stacks work._
 
-### Foreword
+### Variables as call stack fields
 
 A few days ago I noted this:
 
@@ -14,21 +14,23 @@ A few days ago I noted this:
 
 (Rough translation: "It's annoying how often variable "reassignability" and value mutability are confused. And Swift's var/left doesn't help.")
 
-What I meant is, for example, in Swift, `let x = y` means that `x` can't be reassigned to another value, but `y` itself can change, thus changing `x`'s underlying value. This is often a source of confusion.
+What I meant is, for example, in Swift, `let x = y` means that `x` can't be reassigned to another value, but `y` sometimes can change, thus changing `x`'s underlying value.
 
 Now, if we mean variables in the mathematical sense of "names" or "bindings", this sentence really has a point. But, thinking a bit more about it, in a very direct sense, in an imperative language local **variables _are_ part of a value** themselves. This value is **the call stack**, the data structure that links function calls and stores their local data; and a variable is **like a field in this structure**, identifying a bunch of contiguous memory.
 
-**Programming languages let us take the call stack for granted.** While all other values are explicitly managed, the call stack is just there. Many (most?) programmers use it every day without even knowing of its existence. But, of course, that's just an illusion: under the hood, **all there is is cold memory locations, the program counter, and a CPU** stumbling its way thorugh all it. When the abstraction leaks, we get to confusing situations like the above.
+Keeping that in mind, Swift's behavior makes sense: `let x = y` means that the piece of contiguous memory at the call stack named by `x` won't change ever. If `y` is a reference to other piece of memory, like, for example, a class instance is, what `y` points to can change without `x`'s memory changing, so `x` can be declared with `let`. But things like structs, arrays, and `UnsafeMutablePointer`, which may need to change the piece of stack memory that `x` represents, require that `let` to be a `var` instead.
 
-So let's make an experiment: **let's not use the language's built-in support for the call stack**. Instead, **let's make the call stack ourselves**, setting it up explicitly.
+**Programming languages let us take the call stack for granted.** While all other values are explicitly managed, the call stack is just there. Many (most?) programmers use it every day without even knowing of its existence. But, of course, that's just an illusion: under the hood, **all there is is cold memory locations, the program counter, and a CPU** stumbling its way thorugh all it.
+
+In order to see what goes on more clearly, let's make an experiment: **let's _not_ use the language's built-in support for the call stack**. Instead, **let's make the call stack ourselves**, setting things up explicitly.
 
 ### What is the call stack?
 
-Let's recap what the call stack is, and how it operates.
+In order to know what to do, let's first recap what the call stack is, and how it operates.
 
-_If you know about this, just jump to [the next section](#reifying-the-call-stack). Or not. A refresher could be good._
+_If you know about this, just jump to [the next section](#reifying-the-call-stack). Or not. A little refresher could be fun._
 
-In a typical program, **memory is split in three categories**: _static_ memory, where the code, and globals live; the _heap_, where things we allocate on runtime are put; and **the _stack_**, a growing/shrinking contiguous piece of memory **where function calls put their local data**.
+In a typical program, **memory is split in three categories**: _static_ memory, where the code and global variables live; the _heap_, where things we create at runtime are put; and **the _stack_**, a growing/shrinking contiguous piece of memory **where function calls put their local data**.
 
 Before a function is called, **a new _stack frame_ is put above the previous one**. A stack frame is a piece of memory **with enough space for the function's arguments, the local variables**, and two more "internal" things: the **memory address where the stack frame below begins**, and the memory address of the point at the current function's code just _after_ the call happens. This is the location of **the code that must be executed when the function returns**.
 
@@ -48,7 +50,7 @@ I hope you can see why this is called [a stack](https://en.wikipedia.org/wiki/St
 
 So, as we've seen, **a stack trace is just a linked list**. The language programs this for us, but we can do it ourselves, just like with every other data structure.
 
-To avoid using the implicit call stack, **we need to avoid, well, calling functions!** This is feasible in C and frinds, but not so much in most languages, including Go, which is the one we're using. What we're going to do is **set up a tiny "virtual machine" that executes our real code**, in which we will be unable to do certain things. In particular, **we can't:**
+To avoid using the implicit call stack, **we need to avoid, well, calling functions!** This may be feasible in C and friends, but not so much in most languages, including Go, which is the one we're using. What we're going to do is **set up a tiny "virtual machine" that executes our real code**, in which we will be unable to do certain things. In particular, **we can't:**
 
 * Call functions.
 * Return values.
@@ -57,7 +59,7 @@ To avoid using the implicit call stack, **we need to avoid, well, calling functi
 
 Instead, we need to simulate those things. But how?
 
-OK, first, we need to make stack frames somehow. Stack frames is where we need to store:
+First, we need to make stack frames somehow. Stack frames is where we need to store:
 
 * Local variables, including temporals and parameters.
 * The address we should put the function's result value into.
