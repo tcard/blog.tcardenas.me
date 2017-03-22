@@ -1,6 +1,6 @@
 ---
 title: Making a explicit call stack in Go
-layout: post
+date: 2016-04-15 05:03:00
 ---
 
 _You may want to [jump directly to the core thing](#reifying-the-call-stack), if you already know how stacks work._
@@ -74,20 +74,20 @@ For the other two, **we can use a _method value_**. A method value holds both a 
 
 Let's transform the code from the simple example from above. This is `main`:
 
-{% highlight go %}
+```go
 func main() int {
 	a := 3
 	b := 4
 	c := add(a, b)
 	return c
 }
-{% endhighlight %}
+```
 
 Instead of returning nothing, **our VM's `main` returns an int**, which will be interpreted as the **exit code** for the program. We're going to use it to **see the result of our computations**, as, of course, calling `print` or similar is forbidden!
 
 `main`'s stack frame type would look like this:
 
-{% highlight go %}
+```go
 type mainStackFrame struct {
 	// Local variables.
 	a int
@@ -99,20 +99,20 @@ type mainStackFrame struct {
 	// What should be called when main returns.
 	returnContext func()
 }
-{% endhighlight %}
+```
 
 Now, let's convert `add`'s stack frame:
 
-{% highlight go %}
+```go
 func add(a, b int) int {
 	result := a + b
 	return result
 }
-{% endhighlight %}
+```
 
 This needs:
 
-{% highlight go %}
+```go
 type addStackFrame struct {
 	// Parameters.
 	a int
@@ -123,34 +123,34 @@ type addStackFrame struct {
 	resultAddress *int
 	returnContext func()
 }
-{% endhighlight %}
+```
 
 We have to convert the function bodies now. Because now we can't just execute some stuff, call a function, and continue where we left, **we need to split each function's body each time we would've used a function call**. Each of those blocks of code will be a separate method on the function's stack frame.
 
 `main` would be split in two: the code before the call to `add`, and the code after. `add` doesn't call any function, so it needs only one method.
 
-{% highlight go %}
+```go
 func (s *mainStackFrame) start() { ... }
 func (s *mainStackFrame) afterCallingAdd() { ... }
 
 func (s *addStackFrame) start() { ... }
-{% endhighlight %}
+```
 
 To convert function bodies, we do this:
 
 * To convert the use of a function parameter or local variable, replace it by its corresponding struct field.
 * For a return statement, like `return X`, convert it to:
   
-  {% highlight go %}
+  ```go
   *s.resultAddress = X
   nextContext = s.returnContext
-  {% endhighlight %}
+  ```
 
   `nextContext` is a global variable of type `func()` that our VM will use when returning. Setting it is akin to set PC and SB.
 
 * Finally, for a function call, like `r := f(a, b, c)`, convert it to:
 
-  {% highlight go %}
+  ```go
   nextFrame := &fStackFrame{
   	arg1: s.a,
   	arg2: s.b,
@@ -159,13 +159,13 @@ To convert function bodies, we do this:
   	returnContext: s.afterCallingF,
   }
   nextContext = nextFrame.start
-  {% endhighlight %}
+  ```
 
   Here we cheat a little and use a local variable, `nextFrame`. This will temporarily hold a reference to the new stack frame, ie. the address we're going to set our virtual SB to. We pass the arguments and the result address, and we set the new stack frame's return context to `s`, the current stack frame, as SB, and to `afterCallingF` as return address.
 
 OK, let's convert `main` and `add` then:
 
-{% highlight go %}
+```go
 func (s *mainStackFrame) start() {
 	// a := 3
 	s.a = 3
@@ -195,11 +195,11 @@ func (s *addStackFrame) start() {
 	*s.resultAddress = s.result
 	nextContext = s.returnContext
 }
-{% endhighlight %}
+```
 
 Now, we need to actually run this from our VM's `main` function. `main`s mission is extremely simple: just set `nextContext` to our simulated `main`, and call `nextContext` repeatedly while it is set, as `main` is the only function without a `returnContext`, and returning from it sets it to `nil`.
 
-{% highlight go %}
+```go
 var nextContext func()
 
 func main() {
@@ -213,7 +213,7 @@ func main() {
 	}
 	fmt.Println("program exit code:", exitCode)
 }
-{% endhighlight %}
+```
 
 And that's it, [see it running!](http://play.golang.org/p/addfnS6jnS)
 

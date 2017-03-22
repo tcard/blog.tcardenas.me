@@ -1,6 +1,6 @@
 ---
 title: Walking trees through Go's concurrency
-layout: post
+date: 2015-02-04 11:18:56
 ---
 
 Today at work I faced the task of extracting some stats about all files in a folder and its subfolders. Thinking about how to express the problem in Go, this is the best I came up with, leveraging some of the most characteristic features of the language. I hope you find it interesting!
@@ -15,7 +15,7 @@ Now, let's say we want to have a tree and do something with its nodes. For insta
 
 Haskell's algebraic data types (ADTs) are supposed to be the perfect match to this:
 
-{% highlight haskell %}
+```haskell
 -- A Tree is either a Branch with subtrees or a Leaf.
 -- Both carry a String as a tag.
 data Tree = Branch String [Tree] | Leaf String
@@ -41,7 +41,7 @@ allLeavesTags (Leaf tag) = [tag]
 allLeavesTags (Branch _ subtrees) = foldl allInBranch [] subtrees
     where 
       allInBranch acc subtree = acc ++ (allLeavesTags subtree)
-{% endhighlight %}
+```
 
 (**[Runnable.](http://codepad.org/DCtgZunm)**)
 
@@ -55,7 +55,7 @@ Let's see how our favourite language does.
 
 We all know that [Go doesn't have <strike>generics</strike> algebraic types][go-sum-types], so no luck with that beautiful approach. We must resort the ugly old unsafe type-casting (or type-asserting, in Go terms); after all, Go is the new Blub language for sad 9-to-5ers, anti-intellectual pundits and illiterate script kiddies.
 
-{% highlight go %}
+```go
 type Tree interface {
 	Tag() string
 }
@@ -106,7 +106,7 @@ func allLeavesTags(t Tree) []string {
 	}
 	return nil // wat
 }
-{% endhighlight %}
+```
 
 (**[Runnable.](http://play.golang.org/p/obX88lryWp)**)
 
@@ -136,7 +136,7 @@ Here is what we're doing:
 
 Now the code at the producer part is more complex. You can [check it out in the runnable playground](http://play.golang.org/p/mekC5QDbjM). The consumer part looks like this:
 
-{% highlight go %}
+```go
 func findNode(q string, t TreeWalker) Tree {
 	for {
 		select {
@@ -171,7 +171,7 @@ func allLeavesTags(t TreeWalker) []string {
 		}
 	}
 }
-{% endhighlight %}
+```
 
 (**[Runnable.](http://play.golang.org/p/mekC5QDbjM)**)
 

@@ -1,6 +1,6 @@
 ---
 title: An idea for accessing embedder from embedded in Go
-layout: post
+date: 2017-01-17 18:52:05
 ---
 
 Go doesn't have inheritance (subclassing) in the OOP sense. Inheritance has multiple (too many?) uses, but if you want something along the lines of "have a type be like other type, but overriding some parts of it or extending it", then what comes closest is [embedding](https://golang.org/doc/effective_go.html#embedding).
@@ -31,7 +31,7 @@ A value will have a method with two receivers in its method set only when these 
 
 Let's see how this works out in code, building up from the example exposed above:
 
-{% highlight go %}
+```go
 type Foo struct {}
 
 func (f Foo) String() string {
@@ -49,14 +49,14 @@ type FooWrapper struct {
 func (fw FooWrapper) String() string {
 	return "I'm a FooWrapper!"
 }
-{% endhighlight %}
+```
 
 So from that, if we do this:
 
-{% highlight go %}
+```go
 var v FooWrapper
 v.Bar()
-{% endhighlight %}
+```
 
 We see:
 
@@ -66,18 +66,18 @@ Here's my string: I'm a Foo!
 
 Let's add now a method with two receivers.
 
-{% highlight go %}
+```go
 func (f Foo, s fmt.Stringer) BarWithTwoReceivers() {
 	fmt.Println("Here's my string: " + f.String() + ", and the one of the variable I was called on: " + s.String())
 }
-{% endhighlight %}
+```
 
 So if we do this:
 
-{% highlight go %}
+```go
 var v FooWrapper
 v.BarWithTwoReceivers()
-{% endhighlight %}
+```
 
 We see:
 
@@ -93,23 +93,23 @@ What happened there is that `s` was assigned to `v`, because `FooWrapper` is ass
 
 Just as we can use a method as a function by passing its receiver as first argument, we naturally can call a two-receivers method by passing the second one as second argument:
 
-{% highlight go %}
+```go
 var v FooWrapper
 FooWrapper.BarWithTwoReceivers(v.Foo, v)
-{% endhighlight %}
+```
 
 ### Satisfying interfaces
 
 A two-receivers method is no special case about when a value satisfies an interface. For example, we can implement `Foo.String` as a two-receivers method and it still would satifsy 
 
-{% highlight go %}
+```go
 func (f Foo, v fmt.Stringer) String() string {
 	return "I'm a Foo! Here's the string of what I was called on: " + v.String()
 }
 
 var v FooWrapper
 var stringer fmt.Stringer = v
-{% endhighlight %}
+```
 
 ### Second receiver when not embedding?
 
@@ -119,17 +119,17 @@ Note that, becuase `Foo` itself is a `fmt.Stringer`, a `Foo` also has the `BarWi
 
 Although using an interface as second receiver type is the most natural choice on most occasions, and the most flexible, there's no reason you can't use a concrete type:
 
-{%highlight go%}
+```go
 func (f Foo, fw FooWrapper) OnlyForFooWrapper() {}
-{% endhighlight %}
+```
 
 Although, admittedly, that's really just this:
 
-{%highlight go%}
+```go
 func (fw FooWrapper) OnlyForFooWrapper() {
 	f := fw.Foo
 }
-{% endhighlight %}
+```
 
 The key about open recursion is that it's _open_, for what it needs some kind of runtime dispatch. In C++, that means virtual methods, and in Go's case we use interfaces. Maybe we can restrict second receiver types to interfaces, but I feel that restriction would hurt orthogonality a bit.
 

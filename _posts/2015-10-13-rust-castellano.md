@@ -1,6 +1,6 @@
 ---
 title: Rust Castellano
-layout: post
+date: 2015-10-13 02:00:33
 ---
 
 Me gusta [Rust](https://www.rust-lang.org/). Quiero que la gente lo conozca y lo use. Quiero contribuir construyendo **Rust Castellano**, una plataforma en español para programadores no tan experimentados, de menor edad, que no saben tanto inglés, que no viven en _hubs_ tecnológicos o que no se han visto rodeados del entorno adecuado. 
