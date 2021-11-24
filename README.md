@@ -1,1 +1,1 @@
-Go to [blog.tcardenas.me](http://blog.tcardenas.me)!
+Go to [blog.tcardenas.me](https://blog.tcardenas.me)!
